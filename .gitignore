@@ -1,0 +1,11 @@
+binpkgs/
+pkgdir/
+
+*.pem
+
+*.xbps
+*-repodata
+
+*.zip
+*.run
+

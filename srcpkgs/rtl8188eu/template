@@ -1,0 +1,39 @@
+#!/bin/bash
+
+pkgname='rtl8188eu'
+version='5.2.24'
+revision='1'
+arch='armv7l'
+depends=''
+
+short_desc='Kernel module for rtl8188eu'
+license='Proprietary'
+homepage='https://github.com/lwfinger/rtl8188eu'
+
+prepare() {
+  # downloads source archive
+  [ -f "${srcdir}/sources.zip" ] || curl \
+    -o "${srcdir}/sources.zip" \
+    -L 'https://github.com/lwfinger/rtl8188eu/archive/v5.2.2.4.zip'
+}
+
+package() {
+  local kernel="$(uname -r)"
+
+  unzip -d "${pkgdir}" "${srcdir}/sources.zip"
+  mkdir -p "${pkgdir}/rtl8188eu-5.2.2.4/.git"
+
+  ( cd "${pkgdir}/rtl8188eu-5.2.2.4" && make KVER="${kernel}" all )
+
+  mkdir -p "${pkgdir}/etc/modprobe.d"
+  mkdir -p "${pkgdir}/usr/lib/modules/${kernel}/kernel/drivers/net/wireless"
+  mkdir -p "${pkgdir}/usr/lib/firmware/rtlwifi"
+
+  install -m 644 "${pkgdir}/rtl8188eu-5.2.2.4/8188eu.ko" "${pkgdir}/usr/lib/modules/${kernel}/kernel/drivers/net/wireless"
+  install -m 644 "${pkgdir}/rtl8188eu-5.2.2.4/rtl8188eufw.bin" "${pkgdir}/usr/lib/firmware/rtlwifi"
+
+  echo 'blacklist r8188eu' > "${pkgdir}/etc/modprobe.d/50-8188eu.conf"
+
+  rm -rf "${pkgdir}/rtl8188eu-5.2.2.4"
+}
+

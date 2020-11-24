@@ -1,0 +1,23 @@
+Install required build dependencies:
+  $ xbps-install -Sy \
+      rpi-kernel rpi-kernel-headers \
+      gcc make flex \
+      libressl-devel
+
+Build kernel scripts:
+  $ cd /usr/src/rpi-kernel-headers-*
+  $ make prepare0
+  $ find scripts -name '*.o' -exec rm {} \;
+
+Clone rtl8188eu source and build kernel module:
+  $ git clone https://github.com/lwfinger/rtl8188eu
+  $ cd rtl8188eu
+  $ make clean all
+
+To build for specific installed kernel version:
+  $ make KVER=${kver} clean all
+
+Install kernel module and firmware:
+  $ install·-m·644·8188eu.ko·/lib/modules/${kver}/kernel/drivers/net/wireless
+  $ install -m 644 rtl8188eufw.bin /lib/firmware/rtlwifi
+

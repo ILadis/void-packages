@@ -1,0 +1,69 @@
+#!/bin/bash
+
+SELF_SRC="$(realpath ${BASH_SOURCE})"
+SELF_DIR="$(dirname "${SELF_SRC}")"
+
+function switch() {
+  local user="${1}"
+  local group="${2}"
+
+  if [ "${user}" != "$(whoami)" ]; then
+    exec su -g "${group}" -m -s '/bin/bash' "${user}" -- "${SELF_SRC}" "${@:3}";
+  fi
+}
+
+function fail() {
+  local message="${1}"
+
+  echo "${message}"
+  exit 1
+}
+
+function package() {
+  local keydir="${SELF_DIR}"
+  local pkgdir="${SELF_DIR}/pkgdir"
+  local bindir="${SELF_DIR}/binpkgs"
+  local srcdir="${SELF_DIR}/srcpkgs/${1}"
+
+  [ -f "${srcdir}/template" ] || fail 'no valid teamplate file found'
+
+  source "${srcdir}/template"
+
+  rm -rf "${pkgdir}"
+  mkdir -p "${pkgdir}"
+
+  # runs steps from template file
+  prepare || fail "prepare step returned with $?"
+  package || fail "package step returned with $?"
+
+  ( # runs in a subshell
+    mkdir -p "${bindir}/${arch}"
+    cd "${bindir}/${arch}"
+    xbps-create "${pkgdir}" \
+      -n "${pkgname}-${version}_${revision}" \
+      -A "${arch}" \
+      -D "${depends}" \
+      -H "${homepage}" \
+      -l "${license}" \
+      -s "${short_desc}"
+
+    export XBPS_TARGET_ARCH="${arch}"
+    xbps-rindex -a "${bindir}/${arch}"/*.xbps
+    xbps-rindex "${bindir}/${arch}" \
+      --sign --signedby 'root <root@raspberry.home>' \
+      --privkey "${keydir}/signkey.pem"
+    xbps-rindex \
+      --sign-pkg "${bindir}/${arch}/${pkgname}-${version}_${revision}.${arch}.xbps" \
+      --privkey "${keydir}/signkey.pem"
+  )
+
+  rm -rf "${pkgdir}"
+}
+
+function main() {
+  switch 'nobody' 'xbuilder' "${@}"
+  package "${@}"
+}
+
+main "${@}"
+
