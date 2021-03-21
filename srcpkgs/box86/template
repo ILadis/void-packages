@@ -1,0 +1,33 @@
+#!/bin/bash
+
+pkgname='box86'
+version='0.2.0'
+revision='1'
+arch='armv7l'
+depends=''
+
+short_desc='Linux Userspace x86 Emulator with a twist'
+license='MIT'
+homepage='https://github.com/ptitSeb/box86'
+
+prepare() {
+  # downloads source archive
+  [ -f "${srcdir}/sources.zip" ] || curl \
+    -o "${srcdir}/sources.zip" \
+    -L "https://github.com/ptitSeb/box86/archive/refs/tags/v${version}.zip"
+}
+
+package() {
+  unzip -d "${pkgdir}" "${srcdir}/sources.zip"
+
+  cd "${pkgdir}/box86-"*
+  mkdir build && cd build
+
+  cmake .. -DRPI2=1 -DCMAKE_BUILD_TYPE=RelWithDebInfo
+  make -j4
+
+  install -Dm 755 "${pkgdir}/box86-"*/build/box86 "${pkgdir}/usr/bin/box86"
+
+  rm -rf "${pkgdir}/box86-"*
+}
+

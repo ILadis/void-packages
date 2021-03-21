@@ -1,0 +1,47 @@
+#!/bin/bash
+
+pkgname='ts3server'
+version='3.13.3'
+revision='1'
+arch='armv7l'
+depends='box86>=0.2.0'
+
+short_desc='Popular proprietary voice chat server for gaming'
+license='Proprietary'
+homepage='https://www.teamspeak.com'
+
+prepare() {
+  # downloads source archive
+  [ -f "${srcdir}/sources.tar.bz2" ] || curl \
+    -o "${srcdir}/sources.tar.bz2" \
+    -L "https://files.teamspeak-services.com/releases/server/${version}/teamspeak3-server_linux_x86-${version}.tar.bz2"
+}
+
+package() {
+  tar -xvf "${srcdir}/sources.tar.bz2" -C "${pkgdir}"
+
+  install -Dm 644 "${srcdir}/config.ini" "${pkgdir}/etc/ts3server.ini"
+  install -Dm 755 "${srcdir}/run.sh" "${pkgdir}/etc/sv/ts3server/run"
+
+  cd "${pkgdir}/teamspeak3-server_linux_"*
+ 
+  install -Dm 755 'ts3server' "${pkgdir}/usr/bin/ts3server"
+  install -Dm 644 'libts3db_mariadb.so' "${pkgdir}/usr/lib/libts3db_mariadb.so"
+  install -Dm 644 'libts3db_sqlite3.so' "${pkgdir}/usr/lib/libts3db_sqlite3.so"
+  install -Dm 644 'libts3_ssh.so' "${pkgdir}/usr/lib/libts3_ssh.so"
+  install -Dm 644 'LICENSE' "${pkgdir}/usr/share/licenses/teamspeak3-server/LICENSE"
+ 
+  mkdir -p "${pkgdir}/usr/share/doc/ts3server"
+  mkdir -p "${pkgdir}/usr/share/ts3server/sql"
+ 
+  mv doc/* "${pkgdir}/usr/share/doc/ts3server"
+  mv sql/* "${pkgdir}/usr/share/ts3server/sql"
+ 
+  find "${pkgdir}/usr/share/doc/ts3server" -type d -exec chmod 755 {} \;
+  find "${pkgdir}/usr/share/doc/ts3server" -type f -exec chmod 644 {} \;
+  find "${pkgdir}/usr/share/ts3server" -type d -exec chmod 755 {} \;
+  find "${pkgdir}/usr/share/ts3server" -type f -exec chmod 644 {} \;
+
+  rm -rf "${pkgdir}/teamspeak3-server_linux_"*
+}
+
