@@ -21,3 +21,6 @@ Install kernel module and firmware:
   $ install·-m·644·8188eu.ko·/lib/modules/${kver}/kernel/drivers/net/wireless
   $ install -m 644 rtl8188eufw.bin /lib/firmware/rtlwifi
 
+Update module dependencies:
+  $ depmod -a
+

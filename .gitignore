@@ -6,6 +6,6 @@ pkgdir/
 *.xbps
 *-repodata
 
-*.zip
-*.run
+sources.*
+installer.*
 

@@ -12,20 +12,24 @@ function switch() {
   fi
 }
 
-function fail() {
-  local message="${1}"
+function guard() {
+  local code="${1}"
+  local message="${2}"
 
-  echo "${message}"
-  exit 1
+  if [ "${code}" -ne 0 ]; then
+    echo "${message} (${code})"
+    exit 1
+  fi
 }
 
-function package() {
+function build() {
   local keydir="${SELF_DIR}"
   local pkgdir="${SELF_DIR}/pkgdir"
   local bindir="${SELF_DIR}/binpkgs"
   local srcdir="${SELF_DIR}/srcpkgs/${1}"
 
-  [ -f "${srcdir}/template" ] || fail 'no valid teamplate file found'
+  [ -f "${srcdir}/template" ]
+  guard $? 'no teamplate file found'
 
   source "${srcdir}/template"
 
@@ -33,8 +37,11 @@ function package() {
   mkdir -p "${pkgdir}"
 
   # runs steps from template file
-  prepare || fail "prepare step returned with $?"
-  package || fail "package step returned with $?"
+  ( set -e; prepare )
+  guard $? 'error in prepare step'
+
+  ( set -e; package )
+  guard $? 'error in package step'
 
   ( # runs in a subshell
     mkdir -p "${bindir}/${arch}"
@@ -62,7 +69,7 @@ function package() {
 
 function main() {
   switch 'nobody' 'xbuilder' "${@}"
-  package "${@}"
+  build "${@}"
 }
 
 main "${@}"
