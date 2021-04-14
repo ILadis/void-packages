@@ -2,6 +2,7 @@ binpkgs/
 pkgdir/
 
 *.pem
+*.zip
 
 *.xbps
 *-repodata

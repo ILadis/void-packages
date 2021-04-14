@@ -1,0 +1,33 @@
+#!/bin/bash
+
+pkgname='xp-pen-tablet'
+version='3.0.5'
+revision='1'
+arch='x86_64'
+depends=''
+
+short_desc='XP-Pen (Official) Linux utility (New UI driver)'
+license='GPL'
+homepage='https://www.xp-pen.com'
+
+prepare() {
+  # downloads teamspeak3 bundle
+  [ -f "${srcdir}/xp-pen-pentablet.tar.gz.zip" ] || curl \
+    -o "${srcdir}/xp-pen-pentablet.tar.gz.zip" \
+    -L "https://download01.xp-pen.com/file/2021/02/XP-PEN_Pentablet_3.0.5.201126-2.x86_64.tar.gz.zip"
+}
+
+package() {
+  unzip -d "${pkgdir}" "${srcdir}/xp-pen-pentablet.tar.gz.zip"
+  tar -xvf "${pkgdir}"/*.tar.gz -C "${pkgdir}" \
+    --no-same-permissions \
+    --no-same-owner \
+    --strip-components=2 'xp-pen-pentablet_3.0.5.201126-2.x86_64/App/'
+
+  rm "${pkgdir}"/*.tar.gz
+  mv "${pkgdir}/lib"/* "${pkgdir}/usr/lib"
+
+  cp "${srcdir}/pentablet.sh" "${pkgdir}/usr/lib/pentablet/pentablet.sh"
+  chmod +x "${pkgdir}/usr/lib/pentablet/pentablet.sh"
+}
+
