@@ -11,7 +11,7 @@ license='GPL'
 homepage='https://www.xp-pen.com'
 
 prepare() {
-  # downloads teamspeak3 bundle
+  # downloads xp-pen-tablet bundle
   [ -f "${srcdir}/xp-pen-pentablet.tar.gz.zip" ] || curl \
     -o "${srcdir}/xp-pen-pentablet.tar.gz.zip" \
     -L "https://download01.xp-pen.com/file/2021/02/XP-PEN_Pentablet_3.0.5.201126-2.x86_64.tar.gz.zip"
