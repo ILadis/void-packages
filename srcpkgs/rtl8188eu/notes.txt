@@ -1,11 +1,11 @@
 Install required build dependencies:
   $ xbps-install -Sy \
-      rpi-kernel rpi-kernel-headers \
+      rpi2-kernel rpi2-kernel-headers \
       gcc make flex \
-      libressl-devel
+      openssl-devel
 
 Build kernel scripts:
-  $ cd /usr/src/rpi-kernel-headers-*
+  $ cd /usr/src/rpi*-kernel-headers-*
   $ make prepare0
   $ find scripts -name '*.o' -exec rm {} \;
 
