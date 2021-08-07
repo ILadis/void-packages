@@ -15,7 +15,7 @@ sysConfName='config.xml'
 sysLangName='language.ini'
 sysNameConfName='name_config.ini'
 
-rootConfDir="${appDir}/conf"
+rootConfDir="${appDir}/conf/xppen"
 
 if [ ! -f "${userConfDir}/${sysConfName}" ]; then
   cp "${rootConfDir}/${sysConfName}" "${userConfDir}/${sysConfName}"

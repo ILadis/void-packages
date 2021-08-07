@@ -1,7 +1,7 @@
 #!/bin/bash
 
 pkgname='xp-pen-tablet'
-version='3.0.5'
+version='3.1.4'
 revision='1'
 arch='x86_64'
 depends=''
@@ -11,23 +11,22 @@ license='GPL'
 homepage='https://www.xp-pen.com'
 
 prepare() {
-  # downloads xp-pen-tablet bundle
-  [ -f "${srcdir}/xp-pen-pentablet.tar.gz.zip" ] || curl \
-    -o "${srcdir}/xp-pen-pentablet.tar.gz.zip" \
-    -L "https://download01.xp-pen.com/file/2021/02/XP-PEN_Pentablet_3.0.5.201126-2.x86_64.tar.gz.zip"
+  # downloads bundle
+  [ -f "${srcdir}/bundle.tar.gz" ] || curl \
+    -o "${srcdir}/bundle.tar.gz" \
+    -L "https://download01.xp-pen.com/file/2021/07/XP-PEN-pentablet-3.1.4.210623-1.x86_64.tar.gz"
 }
 
 package() {
-  unzip -d "${pkgdir}" "${srcdir}/xp-pen-pentablet.tar.gz.zip"
-  tar -xvf "${pkgdir}"/*.tar.gz -C "${pkgdir}" \
-    --no-same-permissions \
-    --no-same-owner \
-    --strip-components=2 'xp-pen-pentablet_3.0.5.201126-2.x86_64/App/'
+  tar --extract -C "${pkgdir}" -vf "${srcdir}/bundle.tar.gz"
 
-  rm "${pkgdir}"/*.tar.gz
-  mv "${pkgdir}/lib"/* "${pkgdir}/usr/lib"
+  mkdir -p "${pkgdir}/usr/lib/"
+  mv "${pkgdir}/xp-pen-pentablet"*/"App/usr"/* "${pkgdir}/usr/"
+  mv "${pkgdir}/xp-pen-pentablet-"*/"App/lib"/* "${pkgdir}/usr/lib/"
 
   cp "${srcdir}/pentablet.sh" "${pkgdir}/usr/lib/pentablet/pentablet.sh"
   chmod +x "${pkgdir}/usr/lib/pentablet/pentablet.sh"
+
+  rm -rf "${pkgdir}/xp-pen-pentablet-"*
 }
 
