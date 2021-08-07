@@ -14,7 +14,7 @@ license='Proprietary'
 homepage='https://www.teamspeak.com'
 
 prepare() {
-  # downloads teamspeak3 bundle
+  # downloads bundle
   [ -f "${srcdir}/installer.run" ] || curl \
     -o "${srcdir}/installer.run" \
     -L "https://files.teamspeak-services.com/releases/client/${version}/TeamSpeak3-Client-linux_amd64-${version}.run"

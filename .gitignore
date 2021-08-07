@@ -3,6 +3,7 @@ pkgdir/
 
 *.pem
 *.zip
+*.tar.gz
 
 *.xbps
 *-repodata
