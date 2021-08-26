@@ -49,7 +49,7 @@ function build() {
     xbps-create "${pkgdir}" \
       -n "${pkgname}-${version}_${revision}" \
       -A "${arch}" \
-      -D "${depends}" \
+      -D "${depends[@]}" \
       -H "${homepage}" \
       -l "${license}" \
       -s "${short_desc}"
