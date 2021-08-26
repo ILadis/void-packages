@@ -5,7 +5,7 @@ version='6.15'
 revision='1'
 arch='x86_64'
 
-#makdepends('autoconf' 'bison' 'flex' 'make' 'gcc'
+#makdepends=('autoconf' 'bison' 'flex' 'make' 'gcc' 'gcc-multilib' 'patch' 'pkg-config'
 #  'fontconfig-devel-32bit' 'lcms2-devel-32bit' 'libxml2-devel-32bit' 'libXcursor-devel-32bit'
 #  'libXrandr-devel-32bit' 'libXdamage-devel-32bit' 'libXi-devel-32bit' 'libSM-devel-32bit'
 #  'freetype-devel-32bit' 'libgcc-devel-32bit' 'FAudio-devel-32bit' 'vkd3d-devel-32bit'

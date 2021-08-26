@@ -4,7 +4,8 @@ pkgname='xp-pen-tablet'
 version='3.1.4'
 revision='1'
 arch='x86_64'
-depends=''
+
+depends=()
 
 short_desc='XP-Pen (Official) Linux utility (New UI driver)'
 license='GPL'
