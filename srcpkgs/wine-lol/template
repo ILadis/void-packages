@@ -1,35 +1,38 @@
 #!/bin/bash
 
 pkgname='wine-lol'
-version='6.15'
+version='6.16'
 revision='1'
 arch='x86_64'
 
-#makdepends=('autoconf' 'bison' 'flex' 'make' 'gcc' 'gcc-multilib' 'patch' 'pkg-config'
-#  'fontconfig-devel-32bit' 'lcms2-devel-32bit' 'libxml2-devel-32bit' 'libXcursor-devel-32bit'
-#  'libXrandr-devel-32bit' 'libXdamage-devel-32bit' 'libXi-devel-32bit' 'libSM-devel-32bit'
-#  'freetype-devel-32bit' 'libgcc-devel-32bit' 'FAudio-devel-32bit' 'vkd3d-devel-32bit'
-#  'gnutls-devel-32bit')
+#makdepends=(
+#  'autoconf' 'bison' 'flex' 'make' 'patch' 'pkg-config'
+#  'gcc' 'gcc-multilib' 'libgcc-devel-32bit'
+#  'fontconfig-devel-32bit' 'freetype-devel-32bit'
+#  'libxml2-devel-32bit' 'libXcursor-devel-32bit'
+#  'libXrandr-devel-32bit' 'libXdamage-devel-32bit'
+#  'libXi-devel-32bit' 'libSM-devel-32bit'
+#  'FAudio-devel-32bit' 'pulseaudio-devel'
+#  'vkd3d-devel-32bit' 'gnutls-devel-32bit')
 
 depends=(
   'fontconfig>=2.13.1_3' 'fontconfig-32bit>=2.13.1_3'
-  'lcms2>=2.12_1' 'lcms2-32bit>=2.12_1'
+  'freetype>=2.10.4_2' 'freetype-32bit>=2.10.4_2'
   'libxml2>=2.9.10_5' 'libxml2-32bit>=2.9.10_5'
   'libXcursor>=1.2.0_1' 'libXcursor-32bit>=1.2.0_1'
   'libXrandr>=1.5.2_1' 'libXrandr-32bit>=1.5.2_1'
   'libXdamage>=1.1.5_1' 'libXdamage-32bit>=1.1.5_1'
   'libXi>=1.7.10_1' 'libXi-32bit>=1.7.10_1'
   'libSM>=1.2.3_1' 'libSM-32bit>=1.2.3_1'
-  'freetype>=2.10.4_2' 'freetype-32bit>=2.10.4_2'
   'libgcc>=10.2.1pre1_3' 'libgcc-32bit>=10.2.1pre1_3'
   'FAudio>=20.11_2' 'FAudio-32bit>=20.11_2'
+  'libpulseaudio>=15.0_1' 'libpulseaudio-32bit>=15.0_1'
   'vulkan-loader>=1.2.182_1' 'vulkan-loader-32bit>=1.2.182_1'
   'vkd3d>=1.2_1' 'vkd3d-32bit>=1.2_1'
   'gnutls>=3.6.16_1' 'gnutls-32bit>=3.6.16_1'
-  'libpulseaudio>=15.0_1' 'libpulseaudio-32bit>=15.0_1'
   'desktop-file-utils>=0.26_1')
 
-short_desc='A compatibility layer for running Windows programs - Staging branch with League of Legends fixes'
+short_desc='A compatibility layer for running Windows programs - Staging branch with League of Legends fixes and GloriousEggroll patches'
 license='LGPL'
 homepage='https://www.winehq.com'
 
@@ -37,16 +40,20 @@ prepare() {
   # downloads sources
   [ -f "${srcdir}/sources.tar.gz" ] || curl \
     -o "${srcdir}/sources.tar.gz" \
-    -L 'https://dl.winehq.org/wine/source/6.x/wine-6.15.tar.xz'
+    -L "https://dl.winehq.org/wine/source/6.x/wine-${version}.tar.xz"
 
   # downloads sources-staging
   [ -f "${srcdir}/sources-staging.tar.gz" ] || curl \
     -o "${srcdir}/sources-staging.tar.gz" \
-    -L 'https://github.com/wine-staging/wine-staging/archive/v6.15/wine-staging-v6.15.tar.gz'
+    -L "https://github.com/wine-staging/wine-staging/archive/v${version}/wine-staging-v${version}.tar.gz"
 
   # download patches
-  [ -f "${srcdir}/alternative_patch_by_using_a_fake_cs_segment.patch" ] || curl \
-    -o "${srcdir}/alternative_patch_by_using_a_fake_cs_segment.patch" \
+  [ -f "${srcdir}/sources-ge-custom.tar.gz" ] || curl \
+    -o "${srcdir}/sources-ge-custom.tar.gz" \
+    -L "https://github.com/GloriousEggroll/wine-ge-custom/archive/refs/tags/${version}-GE-LoL.tar.gz"
+
+  [ -f "${srcdir}/fake_cs_segment.patch" ] || curl \
+    -o "${srcdir}/fake_cs_segment.patch" \
     -L 'https://bugs.winehq.org/attachment.cgi?id=70550&action=diff&context=patch&collapsed=&headers=1&format=raw'
 
   [ -f "${srcdir}/importc.patch" ] || curl \
@@ -57,18 +64,42 @@ prepare() {
 package() {
   tar --extract -C "${pkgdir}" -vf "${srcdir}/sources.tar.gz"
   tar --extract -C "${pkgdir}" -vf "${srcdir}/sources-staging.tar.gz"
+  tar --extract -C "${pkgdir}" -vf "${srcdir}/sources-ge-custom.tar.gz"
 
   cd "${pkgdir}/wine-staging-${version}/patches"
-  ./patchinstall.sh DESTDIR="${pkgdir}/wine-${version}" --all
+  ./patchinstall.sh DESTDIR="${pkgdir}/wine-${version}" --all \
+    -W winex11-_NET_ACTIVE_WINDOW \
+    -W winex11-WM_WINDOWPOSCHANGING \
+    -W imm32-com-initialization \
+    -W ntdll-NtAlertThreadByThreadId
 
   cd "${pkgdir}/wine-${version}"
-  patch -p1 < "${srcdir}/alternative_patch_by_using_a_fake_cs_segment.patch"
+  patch -p1 < "${srcdir}/fake_cs_segment.patch"
   patch -p1 < "${srcdir}/importc.patch"
+
+  # apply glorious eggroll patches
+  for patch in \
+    'wine-hotfixes/staging/imm32-com-initialization_no_net_active_window.patch' \
+    'proton/01-proton-use_clock_monotonic.patch' \
+    'proton/04-proton-LAA_staging.patch' \
+    'proton/03-proton-fsync_staging.patch' \
+    'proton/40-proton-futex2.patch' \
+    'proton/49-proton_QPC.patch' \
+    'wine-hotfixes/LoL/lfh-non-proton-pre-needed.patch' \
+    'proton/50-proton_LFH.patch' \
+    'wine-hotfixes/pending/hotfix-winelib.patch' \
+    'wine-hotfixes/pending/hotfix-iphlpapi-212361.patch' \
+    'wine-hotfixes/pending/hotfix-ntdll-socket-212770.patch' \
+    'wine-hotfixes/pending/hotfix-bf4_ping.patch'
+  do patch -Np1 < "${pkgdir}/wine-ge-custom-${version}-GE-LoL/patches/${patch}"; done
+
+  # required after patching
+  ./dlls/winevulkan/make_vulkan
+  ./tools/make_requests
+  autoreconf -f
 
   export PKG_CONFIG_PATH='/usr/lib32/pkgconfig'
   export CFLAGS='-m32 -fcommon'
-
-  cd "${pkgdir}/wine-${version}"
 
   ./configure \
     --prefix=/opt/wine-lol \
@@ -82,5 +113,6 @@ package() {
 
   rm -rf "${pkgdir}/wine-${version}"
   rm -rf "${pkgdir}/wine-staging-${version}"
+  rm -rf "${pkgdir}/wine-ge-custom-${version}-GE-LoL"
 }
 
