@@ -55,7 +55,8 @@ function build() {
       -s "${short_desc}"
 
     export XBPS_TARGET_ARCH="${arch}"
-    xbps-rindex -a "${bindir}/${arch}"/*.xbps
+    xbps-rindex -c "${bindir}/${arch}"
+    xbps-rindex -f -a "${bindir}/${arch}"/*.xbps
     xbps-rindex "${bindir}/${arch}" \
       --sign --signedby 'root <root@raspberry.home>' \
       --privkey "${keydir}/signkey.pem"
