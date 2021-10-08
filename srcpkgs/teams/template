@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# official void-packages template:
+# https://github.com/void-linux/void-packages/blob/master/srcpkgs/teams-bin/template
+
+pkgname='teams'
+version='1.4.00.26453'
+revision='1'
+arch='x86_64'
+
+depends=()
+
+short_desc='Official Microsoft Teams client'
+license='Proprietary'
+homepage='https://teams.microsoft.com'
+
+prepare() {
+  # downloads bundle
+  [ -f "${srcdir}/bundle.deb" ] || curl \
+    -o "${srcdir}/bundle.deb" \
+    -L "https://packages.microsoft.com/repos/ms-teams/pool/main/t/teams/teams_${version}_amd64.deb"
+
+  # extract bundle
+  [ -f "${srcdir}/bundle.tar.xz" ] || ar p \
+    "${srcdir}/bundle.deb" 'data.tar.xz' > "${srcdir}/bundle.tar.xz"
+}
+
+package() {
+  tar --extract -C "${pkgdir}" -vf "${srcdir}/bundle.tar.xz"
+
+  # remove unused files
+  for file in \
+    'usr/share/teams/resources/tmp' \
+    'usr/share/teams/resources/assets/.gitignore'
+  do rm -rf "${pkgdir}/${file}"; done
+
+  # adjust folders
+  mkdir -p "${pkgdir}/usr/lib/teams"
+  mv "${pkgdir}/usr/share/teams" "${pkgdir}/usr/lib/"
+
+  # use custom launcher
+  cp "${srcdir}/launcher.sh" "${pkgdir}/usr/bin/teams"
+  chmod +x "${pkgdir}/usr/bin/teams"
+}
+

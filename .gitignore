@@ -3,6 +3,7 @@ pkgdir/
 
 *.pem
 *.zip
+*.deb
 *.tar.*
 
 *.xbps
