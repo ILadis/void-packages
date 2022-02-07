@@ -2,7 +2,7 @@
 
 pkgname='wine-lol'
 version='6.16'
-revision='2'
+revision='3'
 arch='x86_64'
 
 #makdepends=(
@@ -49,7 +49,7 @@ prepare() {
   # downloads bundle
   [ -f "${srcdir}/bundle.tar.xz" ] || curl \
     -o "${srcdir}/bundle.tar.xz" \
-    -L "https://github.com/GloriousEggroll/wine-ge-custom/releases/download/${version}-${revision}-GE-LoL/lutris-ge-${version}-${revision}-lol-x86_64.tar.xz"
+    -L "https://github.com/GloriousEggroll/wine-ge-custom/releases/download/${version}-GE-${revision}-LoL/wine-lutris-ge-${version}-${revision}-lol-x86_64.tar.xz"
 }
 
 package() {

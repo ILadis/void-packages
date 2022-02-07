@@ -25,5 +25,5 @@ Install kernel module and firmware:
   $ install -m 644 rtl8188eufw.bin /lib/firmware/rtlwifi
 
 Update module dependencies:
-  $ depmod -a
+  $ depmod -a ${kver}
 
