@@ -2,11 +2,11 @@
 
 pkgname='rtl8188eu'
 version='5.2.2.4'
-revision='3'
+revision='4'
 arch='armv7l'
 
 #makedepends=('gcc' 'make' 'flex' 'rpi2-kernel' 'rpi2-kernel-headers' 'openssl-devel')
-depends=('rpi2-kernel>=5.10.92_1')
+depends=('rpi2-kernel>=5.10.110_1')
 
 short_desc='Kernel module for rtl8188eu'
 license='Proprietary'
@@ -34,7 +34,7 @@ package() {
   cd "${pkgdir}/rtl8188eu-"*
   mkdir .git
 
-  make KVER="${kernel}" all
+  make KVER="${kernel}" modules strip
 
   install -Dm 644 "${pkgdir}/rtl8188eu-"*/8188eu.ko "${pkgdir}/usr/lib/modules/${kernel}/kernel/drivers/net/wireless/8188eu.ko"
   install -Dm 644 "${pkgdir}/rtl8188eu-"*/rtl8188eufw.bin "${pkgdir}/usr/lib/firmware/rtlwifi/rtl8188eufw.bin"

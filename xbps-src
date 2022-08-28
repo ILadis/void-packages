@@ -43,7 +43,7 @@ function build() {
   ( set -e; package )
   guard $? 'error in package step'
 
-  ( # runs in a subshell
+  (
     mkdir -p "${bindir}/${arch}"
     cd "${bindir}/${arch}"
     xbps-create "${pkgdir}" \
