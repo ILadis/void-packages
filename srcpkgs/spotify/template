@@ -1,0 +1,48 @@
+#!/bin/bash
+
+# official void-packages template:
+# https://github.com/void-linux/void-packages/blob/master/srcpkgs/spotify/template
+
+pkgname='spotify'
+version='1.1.84.716'
+commit='gc5f8b819'
+revision='1'
+arch='x86_64'
+
+depends=()
+
+short_desc='Proprietary music streaming client'
+license='Proprietary'
+homepage='https://www.spotify.com'
+
+prepare() {
+  # downloads bundle
+  [ -f "${srcdir}/bundle.deb" ] || curl \
+    -o "${srcdir}/bundle.deb" \
+    -L "http://repository.spotify.com/pool/non-free/s/spotify-client/spotify-client_${version}.${commit}_amd64.deb"
+
+  # extract bundle
+  [ -f "${srcdir}/bundle.tar.gz" ] || ar p \
+    "${srcdir}/bundle.deb" 'data.tar.gz' > "${srcdir}/bundle.tar.gz"
+}
+
+package() {
+  tar --extract -C "${pkgdir}" -vf "${srcdir}/bundle.tar.gz"
+
+  mkdir -p "${pkgdir}/usr/share/applications"
+  mv "${pkgdir}/usr/share/spotify/spotify.desktop" \
+    "${pkgdir}/usr/share/applications/spotify.desktop"
+
+  rm -rf "${pkgdir}/usr/share/spotify/apt-keys/"
+
+  mkdir -p "${pkgdir}/usr/share/pixmaps"
+  ln -s "${pkgdir}/usr/share/spotify/icons/spotify-linux-512.png" \
+    "${pkgdir}/usr/share/pixmaps/spotify-client.png"
+
+  for size in 22 24 32 48 64 128 256 512; do
+   mkdir -p "${pkgdir}/usr/share/icons/hicolor/${size}x${size}/apps/"
+   ln -s "${pkgdir}/usr/share/spotify/icons/spotify-linux-$size.png" \
+     "${pkgdir}/usr/share/icons/hicolor/${size}x${size}/apps/spotify.png"
+  done
+}
+
