@@ -1,7 +1,7 @@
 #!/bin/bash
 
 pkgname='box86'
-version='0.2.4'
+version='0.2.8'
 revision='1'
 arch='armv7l'
 depends=()
@@ -23,8 +23,8 @@ package() {
   cd "${pkgdir}/box86-"*
   mkdir build && cd build
 
-  cmake .. -DRPI2=1 -DCMAKE_BUILD_TYPE=RelWithDebInfo
-  make -j4
+  cmake .. -DRPI2=1 -DNOGIT=1 -DCMAKE_BUILD_TYPE=RelWithDebInfo
+  make
 
   install -Dm 755 "${pkgdir}/box86-"*/build/box86 "${pkgdir}/usr/bin/box86"
 

@@ -2,11 +2,11 @@
 
 pkgname='nginx-dav-ext-module'
 version='3.0.0'
-revision='3'
+revision='4'
 arch='armv7l'
 
-#makdepends=('gcc' 'make' 'geoip-devel' 'libxml2-devel' 'libxslt-devel' 'openssl-devel' 'pcre-devel')
-depends=('nginx>=1.22.0 libxml2>=2.9.10_1 libxslt>=1.1.34_1')
+#makdepends=('gcc' 'make' 'perl' 'geoip-devel' 'libxml2-devel' 'libxslt-devel' 'openssl-devel' 'pcre-devel')
+depends=('nginx>=1.22.0_3 libxml2>=2.9.10_1 libxslt>=1.1.34_1')
 
 short_desc='nginx module with support for missing PROPFIND and OPTIONS WebDAV methods'
 license='CUSTOM'
@@ -30,7 +30,7 @@ package() {
   cd "${pkgdir}/nginx-"*
 
   ./configure --add-dynamic-module="nginx-dav-ext-module-"* \
-     $(2>&1 nginx -V | grep -oP -- '--\S+' | paste -sd ' ')
+     $(2>&1 nginx -V | grep -oP -- '--\S+' | grep -v -- '--add-dynamic-module' | paste -sd ' ')
 
   make modules
 

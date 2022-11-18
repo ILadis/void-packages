@@ -1,6 +1,6 @@
 Install or update required build dependencies:
   $ xbps-install -Sy \
-      rpi2-kernel rpi2-kernel-headers \
+      rpi-kernel rpi-kernel-headers \
       gcc make flex \
       openssl-devel
 

@@ -2,11 +2,12 @@
 
 pkgname='rtl8188eu'
 version='5.2.2.4'
-revision='4'
+revision='5'
 arch='armv7l'
+kver='5.15.72_1'
 
-#makedepends=('gcc' 'make' 'flex' 'rpi2-kernel' 'rpi2-kernel-headers' 'openssl-devel')
-depends=('rpi2-kernel>=5.10.110_1')
+#makedepends=('gcc' 'make' 'flex' 'rpi-kernel' 'rpi-kernel-headers' 'openssl-devel')
+depends=('rpi-kernel>=5.10.110_1')
 
 short_desc='Kernel module for rtl8188eu'
 license='Proprietary'
@@ -22,21 +23,12 @@ prepare() {
 package() {
   unzip -d "${pkgdir}" "${srcdir}/sources.zip"
 
-  # use first kernel version in modules folder
-  cd '/lib/modules'
-  for kernel in *; do break; done
-
-  if [ -z "${kernel}" ]; then
-    echo 'Could not get target kernel version'
-    exit 1
-  fi
-
   cd "${pkgdir}/rtl8188eu-"*
   mkdir .git
 
-  make KVER="${kernel}" modules strip
+  make KVER="${kver}" modules strip
 
-  install -Dm 644 "${pkgdir}/rtl8188eu-"*/8188eu.ko "${pkgdir}/usr/lib/modules/${kernel}/kernel/drivers/net/wireless/8188eu.ko"
+  install -Dm 644 "${pkgdir}/rtl8188eu-"*/8188eu.ko "${pkgdir}/usr/lib/modules/${kver}/kernel/drivers/net/wireless/8188eu.ko"
   install -Dm 644 "${pkgdir}/rtl8188eu-"*/rtl8188eufw.bin "${pkgdir}/usr/lib/firmware/rtlwifi/rtl8188eufw.bin"
   install -Dm 644 "${srcdir}/blacklist.conf" "${pkgdir}/etc/modprobe.d/blacklist-r8188eu.conf"
 
