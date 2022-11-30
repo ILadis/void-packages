@@ -1,22 +1,22 @@
 #!/bin/bash
 
-pkgname='nginx-dav-ext-module'
-version='3.0.0'
-revision='7'
+pkgname='nginx-fancy-index-module'
+version='0.5.2'
+revision='3'
 arch='armv7l'
 
 #makdepends=('gcc' 'make' 'perl' 'geoip-devel' 'libxml2-devel' 'libxslt-devel' 'openssl-devel' 'pcre-devel')
-depends=('nginx>=1.22.0_3 libxml2>=2.9.10_1 libxslt>=1.1.34_1')
+depends=('nginx>=1.22.0_3')
 
-short_desc='nginx module with support for missing PROPFIND and OPTIONS WebDAV methods'
+short_desc='nginx module to customize look and feel of directory listings'
 license='CUSTOM'
-homepage='https://github.com/arut/nginx-dav-ext-module'
+homepage='https://github.com/aperezdc/ngx-fancyindex'
 
 prepare() {
   # downloads source archive
   [ -f "${srcdir}/sources.zip" ] || curl \
     -o "${srcdir}/sources.zip" \
-    -L "https://github.com/arut/nginx-dav-ext-module/archive/refs/tags/v${version}.zip"
+    -L "https://github.com/aperezdc/ngx-fancyindex/archive/refs/tags/v${version}.zip"
 
   [ -f "${srcdir}/sources.tar.gz" ] || curl \
     -o "${srcdir}/sources.tar.gz" \
@@ -29,9 +29,8 @@ package() {
 
   cd "${pkgdir}/nginx-"*
 
-  ./configure --add-dynamic-module="nginx-dav-ext-module-"* \
+  ./configure --add-dynamic-module="ngx-fancyindex-"* \
     --with-compat \
-    --with-http_dav_module \
     $(2>&1 nginx -V | grep -oP -- '--\S+' | grep -vE -- '--(add-dynamic-module|with)' | paste -sd ' ')
 
   make modules
