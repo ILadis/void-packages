@@ -39,6 +39,7 @@ package() {
   mv "${pkgdir}/usr/share/teams" "${pkgdir}/usr/lib/"
 
   # use custom launcher
+  rm -f "${pkgdir}/usr/bin/teams"
   cp "${srcdir}/launcher.sh" "${pkgdir}/usr/bin/teams"
   chmod +x "${pkgdir}/usr/bin/teams"
 }

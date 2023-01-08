@@ -4,12 +4,12 @@
 # https://github.com/void-linux/void-packages/blob/master/srcpkgs/spotify/template
 
 pkgname='spotify'
-version='1.1.84.716'
-commit='gc5f8b819'
-revision='1'
+version='1.1.84'
+commit='716.gc5f8b819-2'
+revision='2'
 arch='x86_64'
 
-depends=()
+depends=('libcurl>=7.86.0')
 
 short_desc='Proprietary music streaming client'
 license='Proprietary'
@@ -33,16 +33,24 @@ package() {
   mv "${pkgdir}/usr/share/spotify/spotify.desktop" \
     "${pkgdir}/usr/share/applications/spotify.desktop"
 
-  rm -rf "${pkgdir}/usr/share/spotify/apt-keys/"
+  # remove unused files
+  rm -rf "${pkgdir}/usr/share/spotify/apt-keys"
+  rm -rf "${pkgdir}/usr/share/doc/spotify-client"
 
+  # setup icons
   mkdir -p "${pkgdir}/usr/share/pixmaps"
-  ln -s "${pkgdir}/usr/share/spotify/icons/spotify-linux-512.png" \
-    "${pkgdir}/usr/share/pixmaps/spotify-client.png"
 
   for size in 22 24 32 48 64 128 256 512; do
-   mkdir -p "${pkgdir}/usr/share/icons/hicolor/${size}x${size}/apps/"
-   ln -s "${pkgdir}/usr/share/spotify/icons/spotify-linux-$size.png" \
-     "${pkgdir}/usr/share/icons/hicolor/${size}x${size}/apps/spotify.png"
+    mkdir -p "${pkgdir}/usr/share/icons/hicolor/${size}x${size}/apps/"
+    ln -sf "/usr/share/spotify/icons/spotify-linux-${size}.png" \
+      "${pkgdir}/usr/share/icons/hicolor/${size}x${size}/apps/spotify-client.png"
   done
+
+  ln -sf '/usr/lib/libcurl.so.4' "${pkgdir}/usr/share/spotify/libcurl-gnutls.so.4"
+
+  # use custom launcher
+  rm -f "${pkgdir}/usr/bin/spotify"
+  cp "${srcdir}/launcher.sh" "${pkgdir}/usr/bin/spotify"
+  chmod +x "${pkgdir}/usr/bin/spotify"
 }
 
