@@ -45,6 +45,11 @@ function build() {
 
   (
     mkdir -p "${bindir}/${arch}"
+
+    # required to "overwrite" signature of same package version
+    # this also requires deletion of /var/cache/xbps/<pkgname>.{xbps,sig} on clients
+    rm -f "${bindir}/${arch}/${pkgname}-${version}_${revision}.${arch}.xbps.sig"
+
     cd "${bindir}/${arch}"
     xbps-create "${pkgdir}" \
       -n "${pkgname}-${version}_${revision}" \
