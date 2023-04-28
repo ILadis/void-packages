@@ -2,11 +2,11 @@
 
 pkgname='nginx-dav-ext-module'
 version='3.0.0'
-revision='8'
+revision='9'
 arch='armv7l'
 
 #makdepends=('gcc' 'make' 'perl' 'geoip-devel' 'libxml2-devel' 'libxslt-devel' 'openssl-devel' 'pcre-devel')
-depends=('nginx>=1.22.1_1 libxml2>=2.9.10_1 libxslt>=1.1.34_1')
+depends=('nginx>=1.24.0_1 libxml2>=2.9.10_1 libxslt>=1.1.34_1')
 
 short_desc='nginx module with support for missing PROPFIND and OPTIONS WebDAV methods'
 license='CUSTOM'
@@ -20,7 +20,7 @@ prepare() {
 
   [ -f "${srcdir}/sources.tar.gz" ] || curl \
     -o "${srcdir}/sources.tar.gz" \
-    -L "https://nginx.org/download/nginx-1.22.1.tar.gz"
+    -L "https://nginx.org/download/nginx-1.24.0.tar.gz"
 }
 
 package() {
