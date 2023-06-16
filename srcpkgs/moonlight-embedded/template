@@ -1,0 +1,53 @@
+#!/bin/bash
+
+pkgname='moonlight-embedded'
+version='2.5.3'
+revision='3'
+arch='armv7l'
+
+#makdepends=('gcc' 'perl' 'cmake' 'expat-devel' 'openssl-devel' 'rpi-userland-devel' 'libopusenc-devel' 'alsa-lib-devel' 'avahi-libs-devel' 'libcurl-devel' 'libevdev-devel' 'eudev-libudev-devel' 'libuuid-devel')
+depends=('expat>=2.5.0 openssl>=1.1.1t rpi-userland>=20210623 libopusenc>=0.2.1 alsa-lib>=1.2.9 avahi-libs>=0.8 libcurl>=8.1.2 libevdev>=1.13.0 eudev-libudev>=3.2.11 libuuid>=2.38.1')
+
+short_desc='Gamestream client for embedded systems '
+license='GPL'
+homepage='https://github.com/moonlight-stream/moonlight-embedded'
+
+prepare() {
+  # download source archive
+  [ -f "${srcdir}/sources.tar.xz" ] || curl \
+    -o "${srcdir}/sources.tar.xz" \
+    -L "https://github.com/moonlight-stream/moonlight-embedded/releases/download/v${version}/moonlight-embedded-${version}.tar.xz"
+}
+
+package() {
+  mkdir "${pkgdir}/moonlight-embedded"
+  tar --extract -C "${pkgdir}/moonlight-embedded" -vf "${srcdir}/sources.tar.xz"
+
+  cd "${pkgdir}/moonlight-embedded"
+  git submodule update --init --recursive
+  mkdir build && cd build
+
+  cmake ..
+  make
+
+  install -Dm 755 "${pkgdir}/moonlight-embedded/build/moonlight" "${pkgdir}/usr/bin/moonlight"
+  install -Dm 755 "${pkgdir}/moonlight-embedded/build/libmoonlight-pi.so" "${pkgdir}/usr/lib/libmoonlight-pi.so"
+  install -Dm 755 "${pkgdir}/moonlight-embedded/build/libmoonlight-mmal.so" "${pkgdir}/usr/lib/libmoonlight-mmal.so"
+
+  install -Dm 755 "${pkgdir}/moonlight-embedded/build/libgamestream/libgamestream.so.${version}" "${pkgdir}/usr/lib/libgamestream/libgamestream.so.${version}"
+  install -Dm 755 "${pkgdir}/moonlight-embedded/build/libgamestream/libmoonlight-common.so.${version}" "${pkgdir}/usr/lib/libgamestream/libmoonlight-common.so.${version}"
+
+  install -Dm 755 "${pkgdir}/moonlight-embedded/build/docs/moonlight.1" "${pkgdir}/usr/share/man/man1/moonlight.1"
+
+  ( cd "${pkgdir}/usr/lib/libgamestream"
+
+    ln -s "libgamestream.so.${version}" 'libgamestream.so.4'
+    ln -s 'libgamestream.so.4' 'libgamestream.so'
+
+    ln -s "libmoonlight-common.so.${version}" 'libmoonlight-common.so.4'
+    ln -s 'libmoonlight-common.so.4' 'libmoonlight-common.so'
+  )
+
+  rm -rf "${pkgdir}/moonlight-embedded"
+}
+
