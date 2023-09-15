@@ -1,8 +1,8 @@
 #!/bin/bash
 
 pkgname='moonlight-embedded'
-version='2.5.3'
-revision='3'
+version='2.6.0'
+revision='1'
 arch='armv7l'
 
 #makdepends=('gcc' 'perl' 'cmake' 'expat-devel' 'openssl-devel' 'rpi-userland-devel' 'libopusenc-devel' 'alsa-lib-devel' 'avahi-libs-devel' 'libcurl-devel' 'libevdev-devel' 'eudev-libudev-devel' 'libuuid-devel')
