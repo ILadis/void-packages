@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Teams for Linux
+Comment=Unofficial Microsoft Teams client for Linux
+Exec=teams %U
+Icon=teams
+StartupNotify=false
+Terminal=false
+Type=Application
+MimeType=x-scheme-handler/msteams;
+Categories=Network;Chat;InstantMessaging;Application;

@@ -5,7 +5,7 @@
 
 pkgname='teamspeak3'
 version='3.6.2'
-revision='1'
+revision='2'
 arch='x86_64'
 
 depends=('libxslt>=1.1.34' 'libxkbcommon>=1.5.0' 'xcb-util-keysyms>=0.4.1' 'xcb-util-image>=0.4.1' 'xcb-util-wm>=0.4.1' 'xcb-util-renderutil>=0.3.10')
@@ -38,6 +38,6 @@ package() {
   install -Dm 644 "${srcdir}/teamspeak3.desktop" "${pkgdir}/usr/share/applications"
   install -Dm 644 "${srcdir}/logo.png" "${pkgdir}/usr/share/icons/hicolor/256x256/apps/teamspeak3.png"
 
-  ln -sf '/usr/lib/teamspeak3/ts3client_runscript.sh' "${pkgdir}/usr/bin/teamspeak"
+  ln -sf '/usr/lib/teamspeak3/ts3client_runscript.sh' "${pkgdir}/usr/bin/teamspeak3"
 }
 

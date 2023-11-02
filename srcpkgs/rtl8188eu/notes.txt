@@ -1,7 +1,7 @@
 Install or update required build dependencies:
   $ xbps-install -Sy \
       rpi-kernel rpi-kernel-headers \
-      gcc make flex \
+      gcc make flex bc \
       openssl-devel
 
 Cleanup previous installation:
@@ -21,7 +21,7 @@ To build for specific installed kernel version:
   $ make KVER=${kver} clean all
 
 Install kernel module and firmware:
-  $ install·-m·644·8188eu.ko·/lib/modules/${kver}/kernel/drivers/net/wireless
+  $ install -m 644 8188eu.ko /lib/modules/${kver}/kernel/drivers/net/wireless
   $ install -m 644 rtl8188eufw.bin /lib/firmware/rtlwifi
 
 Update module dependencies:

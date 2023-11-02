@@ -2,12 +2,12 @@
 
 pkgname='rtl8188eu'
 version='5.2.2.4'
-revision='5'
+revision='6'
 arch='armv7l'
-kver='5.15.72_1'
+kver='6.1.54_1'
 
-#makedepends=('gcc' 'make' 'flex' 'rpi-kernel' 'rpi-kernel-headers' 'openssl-devel')
-depends=('rpi-kernel>=5.10.110_1')
+#makedepends=('gcc' 'make' 'flex' 'bc' 'rpi-kernel' 'rpi-kernel-headers' 'openssl-devel')
+depends=('rpi-kernel>=6.1.54_1')
 
 short_desc='Kernel module for rtl8188eu'
 license='Proprietary'

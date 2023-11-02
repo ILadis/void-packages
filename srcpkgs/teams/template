@@ -1,46 +1,43 @@
 #!/bin/bash
 
-# official void-packages template:
-# https://github.com/void-linux/void-packages/blob/master/srcpkgs/teams-bin/template
-
 pkgname='teams'
-version='1.5.00.10453'
-revision='1'
+version='1.3.14'
+revision='2'
 arch='x86_64'
 
 depends=()
 
-short_desc='Official Microsoft Teams client'
+short_desc='Microsoft Teams for Linux'
 license='Proprietary'
 homepage='https://teams.microsoft.com'
 
 prepare() {
-  # downloads bundle
-  [ -f "${srcdir}/bundle.deb" ] || curl \
-    -o "${srcdir}/bundle.deb" \
-    -L "https://packages.microsoft.com/repos/ms-teams/pool/main/t/teams/teams_${version}_amd64.deb"
-
-  # extract bundle
-  [ -f "${srcdir}/bundle.tar.xz" ] || ar p \
-    "${srcdir}/bundle.deb" 'data.tar.xz' > "${srcdir}/bundle.tar.xz"
+  # downloadis bundle
+  [ -f "${srcdir}/bundle.tar.gz" ] || curl \
+    -o "${srcdir}/bundle.tar.gz" \
+    -L "https://github.com/IsmaelMartinez/teams-for-linux/releases/download/v${version}/teams-for-linux-${version}.tar.gz"
 }
 
 package() {
-  tar --extract -C "${pkgdir}" -vf "${srcdir}/bundle.tar.xz"
-
-  # remove unused files
-  for file in \
-    'usr/share/teams/resources/tmp' \
-    'usr/share/teams/resources/assets/.gitignore'
-  do rm -rf "${pkgdir}/${file}"; done
-
-  # adjust folders
+  # extract bundle
   mkdir -p "${pkgdir}/usr/lib/teams"
-  mv "${pkgdir}/usr/share/teams" "${pkgdir}/usr/lib/"
+  tar --extract -C "${pkgdir}/usr/lib/teams" -vf "${srcdir}/bundle.tar.gz" \
+    --strip-components=1
 
   # use custom launcher
-  rm -f "${pkgdir}/usr/bin/teams"
+  mkdir -p "${pkgdir}/usr/bin"
   cp "${srcdir}/launcher.sh" "${pkgdir}/usr/bin/teams"
   chmod +x "${pkgdir}/usr/bin/teams"
+
+
+  mkdir -p "${pkgdir}/usr/share/applications"
+  install -Dm 644 "${srcdir}/teams.desktop" "${pkgdir}/usr/share/applications"
+
+  # download icons
+  for size in 24 32 48 64 128 256 512; do
+    mkdir -p "${pkgdir}/usr/share/icons/hicolor/${size}x${size}/apps/"
+    curl -L "https://github.com/IsmaelMartinez/teams-for-linux/blob/develop/build/icons/${size}x${size}.png?raw=true" \
+      -o "${pkgdir}/usr/share/icons/hicolor/${size}x${size}/apps/teams.png"
+  done
 }
 
