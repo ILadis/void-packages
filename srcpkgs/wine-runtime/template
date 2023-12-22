@@ -1,0 +1,41 @@
+#!/bin/bash
+
+pkgname='wine-runtime'
+version='8.0'
+revision='1'
+arch='x86_64'
+
+depends=(
+  'fontconfig>=2.13.1_1' 'fontconfig-32bit>=2.13.1_1'
+  'freetype>=2.10.4_1' 'freetype-32bit>=2.10.4_1'
+  'libunwind>=1.5.0' 'libunwind-32bit>=1.5.0'
+  'libpng>=1.6.37_1' 'libpng-32bit>=1.6.37_1'
+  'libjpeg-turbo>=2.1.1_1' 'libjpeg-turbo-32bit>=2.1.1_1'
+  'libxml2>=2.9.10_5' 'libxml2-32bit>=2.9.10_5'
+  'libXcursor>=1.2.0_1' 'libXcursor-32bit>=1.2.0_1'
+  'libXrandr>=1.5.2_1' 'libXrandr-32bit>=1.5.2_1'
+  'libXdamage>=1.1.5_1' 'libXdamage-32bit>=1.1.5_1'
+  'libXi>=1.7.10_1' 'libXi-32bit>=1.7.10_1'
+  'libSM>=1.2.3_1' 'libSM-32bit>=1.2.3_1'
+  'libgcc>=10.2.1pre1_1' 'libgcc-32bit>=10.2.1pre1_1'
+  'FAudio>=20.11_1' 'FAudio-32bit>=20.11_1'
+  'libmpg123>=1.28.2_1' 'libmpg123-32bit>=1.28.2_1'
+  'libpulseaudio>=15.0_1' 'libpulseaudio-32bit>=15.0_1'
+  'vulkan-loader>=1.2.182_1' 'vulkan-loader-32bit>=1.2.182_1'
+  'vkd3d>=1.2_1' 'vkd3d-32bit>=1.2_1'
+  'gstreamer1>=1.18.4_1' 'gstreamer1-32bit>=1.18.4_1'
+  'gst-plugins-base1>=1.18.4_1' 'gst-plugins-base1-32bit>=1.18.4_1'
+  'gnutls>=3.6.16_1' 'gnutls-32bit>=3.6.16_1'
+  'libgcrypt>=1.9.4_1' 'libgcrypt-32bit>=1.9.4_1'
+  'desktop-file-utils>=0.26_1')
+
+short_desc='A compatibility layer for running Windows programs - Runtime dependencies'
+license='LGPL'
+homepage='https://www.winehq.com'
+
+# nothing to do
+prepare() { : ; }
+
+# nothing to do
+package() { : ; }
+
