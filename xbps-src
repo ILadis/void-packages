@@ -8,7 +8,26 @@ function switch() {
   local group="${2}"
 
   if [ "${user}" != "$(whoami)" ]; then
-    exec su -g "${group}" -m -s '/bin/bash' "${user}" -- "${SELF_SRC}" "${@:3}";
+    exec su -g "${group}" -m -s '/bin/bash' "${user}" -- "${SELF_SRC}" "${@:3}"
+  fi
+}
+
+function chroot() {
+  local tmpdir="${1}"
+
+  if [ ! -f '/.chroot' ]; then
+    mkdir -p "${tmpdir}"/{rootfs,buildfs}
+    umount -qR "${tmpdir}/rootfs"
+
+    mount -t overlay overlay -o lowerdir=/,upperdir="${tmpdir}/buildfs",workdir="${tmpdir}/rootfs" "${tmpdir}/rootfs"
+    mount -t proc /proc "${tmpdir}/rootfs/proc/"
+    mount -t sysfs /sys "${tmpdir}/rootfs/sys/"
+    mount --rbind /dev "${tmpdir}/rootfs/dev/"
+    mount --rbind /run "${tmpdir}/rootfs/run/"
+    mount --bind "${SELF_DIR}" "${tmpdir}/rootfs/${SELF_DIR}"
+
+    touch "${tmpdir}/rootfs/.chroot"
+    exec chroot "${tmpdir}/rootfs" '/bin/bash' -- "${SELF_SRC}" "${@:2}"
   fi
 }
 
@@ -32,6 +51,11 @@ function build() {
   guard $? 'no teamplate file found'
 
   source "${srcdir}/template"
+
+  if [ "$(whoami)" == 'root' ]; then
+    xbps-install -Ay ${makedepends[*]}
+    switch 'nobody' 'xbuilder' "${@}"
+  fi
 
   rm -rf "${pkgdir}"
   mkdir -p "${pkgdir}"
@@ -74,7 +98,7 @@ function build() {
 }
 
 function main() {
-  switch 'nobody' 'xbuilder' "${@}"
+  chroot '/tmp/xbps-src' "${@}"
   build "${@}"
 }
 
