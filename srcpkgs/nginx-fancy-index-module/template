@@ -5,7 +5,7 @@ version='0.5.2'
 revision='3'
 arch='armv7l'
 
-#makdepends=('gcc' 'make' 'perl' 'geoip-devel' 'libxml2-devel' 'libxslt-devel' 'openssl-devel' 'pcre-devel')
+makedepends=('gcc' 'make' 'perl' 'geoip-devel' 'libxml2-devel' 'libxslt-devel' 'openssl-devel' 'pcre-devel')
 depends=('nginx>=1.22.0_3')
 
 short_desc='nginx module to customize look and feel of directory listings'
