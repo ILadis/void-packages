@@ -94,7 +94,7 @@ function build() {
       --privkey "${keydir}/signkey.pem"
   )
 
-  rm -rf "${pkgdir}"
+  find "${pkgdir}" -mindepth 1 -delete
 }
 
 function main() {
