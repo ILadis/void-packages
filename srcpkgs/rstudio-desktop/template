@@ -1,0 +1,31 @@
+#!/bin/bash
+
+pkgname='rstudio-desktop'
+version='2023.12.1'
+revision='1'
+arch='x86_64'
+
+depends=(
+    'R>=3.0.0' 'hicolor-icon-theme>=0.17' 'shared-mime-info>=2.4' 'openssl>=3.1.5' 'gtk+3>=3.24.41'
+    'libssl1.1>=1.1.1t' 'libedit>=20230828.3.1' 'postgresql-libs>=16.2' 'sqlite>=3.44.2')
+
+short_desc='An integrated development environment (IDE) for R'
+license='GPL'
+homepage='https://www.rstudio.org'
+
+prepare() {
+  # downloadis bundle
+  [ -f "${srcdir}/bundle.deb" ] || curl \
+    -o "${srcdir}/bundle.deb" \
+    -L "https://download1.rstudio.org/electron/focal/amd64/rstudio-${version}-402-amd64.deb"
+
+  # extract bundle
+  [ -f "${srcdir}/bundle.tar.xz" ] || ar p \
+    "${srcdir}/bundle.deb" 'data.tar.xz' > "${srcdir}/bundle.tar.xz"
+}
+
+package() {
+  # extract bundle
+  tar --extract -C "${pkgdir}" -vf "${srcdir}/bundle.tar.xz"
+}
+
