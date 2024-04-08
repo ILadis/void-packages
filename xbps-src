@@ -53,11 +53,11 @@ function build() {
   source "${srcdir}/template"
 
   if [ "$(whoami)" == 'root' ]; then
-    xbps-install -Ay ${makedepends[*]}
+    test -z "${makedepends[*]}" || xbps-install -Ay ${makedepends[*]}
     switch 'nobody' 'xbuilder' "${@}"
   fi
 
-  rm -rf "${pkgdir}"
+  find "${pkgdir}" -mindepth 1 -delete
   mkdir -p "${pkgdir}"
 
   # runs steps from template file
