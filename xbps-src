@@ -19,6 +19,9 @@ function chroot() {
     mkdir -p "${tmpdir}"/{rootfs,buildfs}
     umount -qR "${tmpdir}/rootfs"
 
+    find "${tmpdir}/rootfs" -mindepth 1 -delete
+    find "${tmpdir}/buildfs" -mindepth 1 -delete
+
     mount -t overlay overlay -o lowerdir=/,upperdir="${tmpdir}/buildfs",workdir="${tmpdir}/rootfs" "${tmpdir}/rootfs"
     mount -t proc /proc "${tmpdir}/rootfs/proc/"
     mount -t sysfs /sys "${tmpdir}/rootfs/sys/"
