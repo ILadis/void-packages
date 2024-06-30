@@ -3,6 +3,16 @@
 SELF_SRC="$(realpath ${BASH_SOURCE})"
 SELF_DIR="$(dirname "${SELF_SRC}")"
 
+function guard() {
+  local code="${1}"
+  local message="${2}"
+
+  if [ "${code}" -ne 0 ]; then
+    echo "${message} (${code})"
+    exit 1
+  fi
+}
+
 function switch() {
   local user="${1}"
   local group="${2}"
@@ -34,16 +44,6 @@ function chroot() {
   fi
 }
 
-function guard() {
-  local code="${1}"
-  local message="${2}"
-
-  if [ "${code}" -ne 0 ]; then
-    echo "${message} (${code})"
-    exit 1
-  fi
-}
-
 function build() {
   local keydir="${SELF_DIR}"
   local pkgdir="${SELF_DIR}/pkgdir"
@@ -56,9 +56,10 @@ function build() {
   source "${srcdir}/template"
 
   if [ "$(whoami)" == 'root' ]; then
-    test -z "${makedepends[*]}" || xbps-install -Ay ${makedepends[*]}
-    switch 'nobody' 'xbuilder' "${@}"
+    test -n "${makedepends[*]}" && xbps-install -Ay ${makedepends[*]}
   fi
+
+  switch 'nobody' 'xbuilder' "${@}"
 
   find "${pkgdir}" -mindepth 1 -delete
   mkdir -p "${pkgdir}"
