@@ -2,7 +2,7 @@
 
 pkgname='rtl8188eu'
 version='6.6.35'
-revision='1'
+revision='2'
 arch='armv7l'
 kver='6.6.35_1'
 
