@@ -14,7 +14,7 @@ depends=(
     'expat>=2.5.0' 'openssl>=1.1.1t' 'rpi-userland>=20210623' 'libopusenc>=0.2.1' 'alsa-lib>=1.2.9'
     'avahi-libs>=0.8' 'libcurl>=8.1.2' 'libevdev>=1.13.0' 'eudev-libudev>=3.2.11' 'libuuid>=2.38.1')
 
-short_desc='Gamestream client for embedded systems '
+short_desc='Gamestream client for embedded systems'
 license='GPL'
 homepage='https://github.com/moonlight-stream/moonlight-embedded'
 
