@@ -1,0 +1,64 @@
+#!/bin/bash
+
+pkgname='ffmpeg-rpi'
+version='7.0.1'
+revision='3'
+arch='armv7l'
+
+makedepends=(
+    'gcc' 'pkg-config' 'alsa-lib-devel' 'libaom-devel' 'lame-devel' 'fdk-aac-devel'
+    'x264-devel' 'x265-devel' 'rpi-userland-devel')
+
+depends=(
+    'alsa-lib>=1.2.12' 'libaom>=3.8.1' 'lame>=3.100' 'fdk-aac>=2.0.3' 'x264>=20191217.2245'
+    'x265>=3.6' 'rpi-userland>=20210623')
+
+short_desc='Decoding, encoding and streaming software'
+license='GPL'
+homepage='https://www.ffmpeg.org'
+
+prepare() {
+  # download source archive
+  [ -f "${srcdir}/sources.tar.gz" ] || curl \
+    -o "${srcdir}/sources.tar.gz" \
+    -L "https://github.com/FFmpeg/FFmpeg/archive/refs/tags/n${version}.tar.gz"
+}
+
+package() {
+  export PKG_CONFIG_PATH='/opt/vc/lib/pkgconfig/'
+
+  mkdir "${pkgdir}/ffmpeg"
+  tar --extract -C "${pkgdir}/ffmpeg" -vf "${srcdir}/sources.tar.gz" \
+    --strip-components=1
+
+  cd "${pkgdir}/ffmpeg"
+  ./configure \
+    --prefix=/usr \
+    --disable-debug \
+    --disable-stripping \
+    --enable-shared \
+    --enable-gpl \
+    --enable-version3 \
+    --enable-nonfree \
+    --enable-pthreads \
+    --enable-libaom \
+    --enable-libmp3lame \
+    --enable-libfdk-aac \
+    --enable-libx264 \
+    --enable-libx265 \
+    --enable-mmal \
+    --enable-omx \
+    --enable-omx-rpi\
+    --enable-ffmpeg \
+    --disable-ffplay \
+    --disable-ffprobe
+
+  make -j$(nproc)
+  make DESTDIR="${pkgdir}" install
+
+  cd "${pkgdir}"
+  rm -rf "${pkgdir}/ffmpeg" \
+    "${pkgdir}/usr/lib/pkgconfig" \
+    "${pkgdir}/usr/share/ffmpeg/examples"
+#   "${pkgdir}/usr/include" \
+}
