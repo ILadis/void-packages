@@ -48,10 +48,7 @@ function setup() {
 }
 
 function main() {
-  local tmpdir="${1}"
-
-  test ! -z "${tmpdir}"
-  guard $? 'no temp directory for chroot specified'
+  local tmpdir='/tmp/xbps-src'
 
   test ! -f '/.chroot'
   guard $? 'already in a chroot'
@@ -59,7 +56,7 @@ function main() {
   purge "${tmpdir}"/{rootfs,buildfs}
 
   setup "${tmpdir}"/{rootfs,buildfs}
-  chroot "${tmpdir}/rootfs" "${SELF_DIR}/xbps-src" "${@:2}"
+  chroot "${tmpdir}"/rootfs "${SELF_DIR}/xbps-src" "${@:1}"
 
   purge "${tmpdir}"/{rootfs,buildfs}
 }
