@@ -22,26 +22,18 @@ function switch() {
   fi
 }
 
-function chroot() {
-  local tmpdir="${1}"
+function install() {
+  local srcdir="${SELF_DIR}/srcpkgs/${1}"
 
-  if [ ! -f '/.chroot' ]; then
-    mkdir -p "${tmpdir}"/{rootfs,buildfs}
-    umount -qR "${tmpdir}/rootfs"
+  test -f "${srcdir}/template"
+  guard $? 'no teamplate file found'
 
-    find "${tmpdir}/rootfs" -mindepth 1 -delete
-    find "${tmpdir}/buildfs" -mindepth 1 -delete
+  # skip dependency install if not running as root
+  test "$(whoami)" != 'root' && return 1
 
-    mount -t overlay overlay -o lowerdir=/,upperdir="${tmpdir}/buildfs",workdir="${tmpdir}/rootfs" "${tmpdir}/rootfs"
-    mount -t proc /proc "${tmpdir}/rootfs/proc/"
-    mount -t sysfs /sys "${tmpdir}/rootfs/sys/"
-    mount --rbind /dev "${tmpdir}/rootfs/dev/"
-    mount --rbind /run "${tmpdir}/rootfs/run/"
-    mount --bind "${SELF_DIR}" "${tmpdir}/rootfs/${SELF_DIR}"
-
-    touch "${tmpdir}/rootfs/.chroot"
-    exec chroot "${tmpdir}/rootfs" '/bin/bash' -- "${SELF_SRC}" "${@:2}"
-  fi
+  ( source "${srcdir}/template"
+    test -n "${makedepends[*]}" && xbps-install -Ay ${makedepends[*]}
+  )
 }
 
 function build() {
@@ -50,28 +42,20 @@ function build() {
   local bindir="${SELF_DIR}/binpkgs"
   local srcdir="${SELF_DIR}/srcpkgs/${1}"
 
-  [ -f "${srcdir}/template" ]
+  test -f "${srcdir}/template"
   guard $? 'no teamplate file found'
-
-  source "${srcdir}/template"
-
-  if [ "$(whoami)" == 'root' ]; then
-    test -n "${makedepends[*]}" && xbps-install -Ay ${makedepends[*]}
-  fi
-
-  switch 'nobody' 'xbuilder' "${@}"
 
   find "${pkgdir}" -mindepth 1 -delete
   mkdir -p "${pkgdir}"
 
-  # runs steps from template file
-  ( set -e; prepare )
-  guard $? 'error in prepare step'
+  ( source "${srcdir}/template"
 
-  ( set -e; package )
-  guard $? 'error in package step'
+    # run prepare steps from template file
+    ( set -e; prepare ) || exit $?
 
-  (
+    # run package steps from template file
+    ( set -e; package ) || exit $?
+
     mkdir -p "${bindir}/${arch}"
 
     # required to "overwrite" signature of same package version
@@ -98,11 +82,13 @@ function build() {
       --privkey "${keydir}/signkey.pem"
   )
 
+  guard $? 'failed to build package'
   find "${pkgdir}" -mindepth 1 -delete
 }
 
 function main() {
-  chroot '/tmp/xbps-src' "${@}"
+  install "${@}"
+  switch 'nobody' 'xbuilder' "${@}"
   build "${@}"
 }
 

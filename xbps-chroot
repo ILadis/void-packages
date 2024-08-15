@@ -1,0 +1,68 @@
+#!/bin/bash
+
+SELF_SRC="$(realpath ${BASH_SOURCE})"
+SELF_DIR="$(dirname "${SELF_SRC}")"
+
+function guard() {
+  local code="${1}"
+  local message="${2}"
+
+  if [ "${code}" -ne 0 ]; then
+    echo "${message} (${code})"
+    exit 1
+  fi
+}
+
+function purge() {
+  local rootfs="${1}"
+  local buildfs="${2}"
+
+  mkdir -p "${rootfs}" "${buildfs}"
+  umount -qR "${rootfs}"
+
+  find "${rootfs}" -mindepth 1 -delete
+  find "${buildfs}" -mindepth 1 -delete
+}
+
+function setup() {
+  local rootfs="${1}"
+  local buildfs="${2}"
+
+  mount -t overlay overlay -o lowerdir=/,upperdir="${buildfs}",workdir="${rootfs}" "${rootfs}"
+  guard $? 'could not mount overlayfs onto root/build directories'
+
+  mount -t proc /proc "${rootfs}/proc"
+  guard $? 'could not mount procfs into overlayfs'
+
+  mount -t sysfs /sys "${rootfs}/sys"
+  guard $? 'could not mount sysfs into overlayfs'
+
+  mount --rbind /dev "${rootfs}/dev"
+  guard $? 'could not bind mount /dev into overlayfs'
+
+  mount --rbind /run "${rootfs}/run"
+  guard $? 'could not bind mount /run into overlayfs'
+
+  mount --bind "${SELF_DIR}" "${rootfs}/${SELF_DIR}"
+  touch "${rootfs}/.chroot"
+}
+
+function main() {
+  local tmpdir="${1}"
+
+  test ! -z "${tmpdir}"
+  guard $? 'no temp directory for chroot specified'
+
+  test ! -f '/.chroot'
+  guard $? 'already in a chroot'
+
+  purge "${tmpdir}"/{rootfs,buildfs}
+
+  setup "${tmpdir}"/{rootfs,buildfs}
+  chroot "${tmpdir}/rootfs" "${SELF_DIR}/xbps-src" "${@:2}"
+
+  purge "${tmpdir}"/{rootfs,buildfs}
+}
+
+main "${@}"
+
