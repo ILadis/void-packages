@@ -1,8 +1,8 @@
 #!/bin/bash
 
-pkgname='ffmpeg-rpi'
+pkgname='ffmpeg-nox'
 version='7.0.1'
-revision='3'
+revision='4'
 arch='armv7l'
 
 makedepends=(
@@ -59,6 +59,6 @@ package() {
   cd "${pkgdir}"
   rm -rf "${pkgdir}/ffmpeg" \
     "${pkgdir}/usr/lib/pkgconfig" \
-    "${pkgdir}/usr/share/ffmpeg/examples"
-#   "${pkgdir}/usr/include" \
+    "${pkgdir}/usr/share/ffmpeg/examples" \
+    "${pkgdir}/usr/include"
 }
