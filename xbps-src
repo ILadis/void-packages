@@ -51,10 +51,12 @@ function build() {
   ( source "${srcdir}/template"
 
     # run prepare steps from template file
-    ( set -e; prepare ) || exit $?
+    ( set -e; prepare )
+    guard $? 'error in prepare step'
 
     # run package steps from template file
-    ( set -e; package ) || exit $?
+    ( set -e; package )
+    guard $? 'error in package step'
 
     mkdir -p "${bindir}/${arch}"
 
@@ -82,8 +84,10 @@ function build() {
       --privkey "${keydir}/signkey.pem"
   )
 
-  guard $? 'failed to build package'
-  find "${pkgdir}" -mindepth 1 -delete
+  # do not purge package directory when build fails (for debugging purposes)
+  if [ $? -eq 0 ]; then
+    find "${pkgdir}" -mindepth 1 -delete
+  fi
 }
 
 function main() {
