@@ -1,0 +1,115 @@
+#!/bin/bash
+
+pkgname='vlc-nox'
+version='3.0.21'
+revision='1'
+arch='armv7l'
+
+makedepends=(
+    'gcc' 'pkg-config' 'libtool' 'flex' 'gettext'
+    'alsa-lib-devel' 'faad2-devel' 'mpg123-devel' 'live555-devel'
+    'libarchive-devel' 'libdav1d-devel' 'libmpeg2-devel' 'libmatroska-devel'
+    'x264-devel' 'x265-devel' 'rpi-userland-devel')
+
+depends=(
+    'alsa-lib>=1.2.12' 'faad2>=2.11.1' 'mpg123>=1.32.7' 'live555>=2020.08.11'
+    'libarchive>=3.7.4' 'libdav1d>=1.3.0' 'libmpeg2>=0.5.1' 'libmatroska>=1.7.1'
+    'x264>=20191217.2245' 'x265>=3.6' 'rpi-userland>=20210623')
+
+short_desc='Cross-platform multimedia player'
+license='GPL'
+homepage='https://www.videolan.org/vlc'
+
+prepare() {
+  # download source archive
+  [ -f "${srcdir}/sources.tar.xz" ] || curl \
+    -o "${srcdir}/sources.tar.xz" \
+    -L "http://ftp.videolan.org/pub/videolan/vlc/${version}/vlc-${version}.tar.xz"
+}
+
+package() {
+  export PKG_CONFIG_PATH='/opt/vc/lib/pkgconfig/'
+
+  # manual compile flags since no pkg-config (*.pc file) is available
+  export LIVE555_CFLAGS='-I/usr/include/BasicUsageEnvironment -I/usr/include/UsageEnvironment -I/usr/include/groupsock -I/usr/include/liveMedia -L/usr/lib'
+  export LIVE555_LIBS='-lBasicUsageEnvironment -lUsageEnvironment -lgroupsock -lliveMedia'
+
+  export GLES2_CFLAGS='-I/opt/vc/include -L/opt/vc/lib'
+  export GLES2_LIBS='-lGLESv2'
+
+  mkdir "${pkgdir}/vlc"
+  tar --extract -C "${pkgdir}/vlc" -vf "${srcdir}/sources.tar.xz" \
+    --strip-components=1
+
+  cd "${pkgdir}/vlc"
+
+  ./configure \
+    --prefix=/usr \
+    --disable-update-check \
+    --disable-debug \
+    --enable-shared \
+    --enable-run-as-root \
+    --without-x \
+    --without-libiconv-prefix \
+    --without-libintl-prefix \
+    --disable-nls \
+    --disable-xcb \
+    --disable-xvideo \
+    --disable-wayland \
+    --disable-gst-decode \
+    --disable-merge-ffmpeg \
+    --disable-pulse \
+    --disable-jack \
+    --enable-alsa \
+    --disable-avahi \
+    --disable-lua \
+    --disable-dshow \
+    --disable-dvdnav \
+    --disable-dvdread \
+    --disable-bluray \
+    --disable-opencv \
+    --disable-smbclient \
+    --disable-smb2 \
+    --disable-nfs \
+    --disable-sftp \
+    --disable-gnomevfs \
+    --disable-v4l2 \
+    --disable-pvr \
+    --disable-dc1394 \
+    --disable-dv1394 \
+    --disable-linsys \
+    --disable-a52 \
+    --disable-libcddb \
+    --disable-libproxy \
+    --disable-avcodec \
+    --disable-zvbi \
+    --disable-vnc \
+    --disable-freerdp \
+    --disable-decklink \
+    --disable-dbus \
+    --enable-httpd \
+    --enable-archive \
+    --enable-faad \
+    --enable-mpg123 \
+    --enable-dav1d \
+    --enable-matroska \
+    --enable-libmpeg2 \
+    --enable-live555 \
+    --enable-x264 \
+    --enable-x265 \
+    --enable-omxil \
+    --enable-omxil-vout \
+    --enable-rpi-omxil \
+    --enable-mmal \
+    --disable-swscale \
+    --enable-gles2
+
+  make -j$(nproc)
+  make DESTDIR="${pkgdir}" install
+
+  cd "${pkgdir}"
+  rm -rf "${pkgdir}/vlc" \
+    "${pkgdir}/usr/lib/pkgconfig" \
+    "${pkgdir}/usr/include" \
+    "${pkgdir}/usr/share"/{vlc,kde4,icons,docs,metainfo}
+}
