@@ -1,7 +1,7 @@
 #!/bin/bash
 
 pkgname='nginx-dav-ext-module'
-version='1.26.1'
+version='1.26.2'
 revision='1'
 arch='armv7l'
 
@@ -16,11 +16,11 @@ prepare() {
   # downloads source archive
   [ -f "${srcdir}/sources.zip" ] || curl \
     -o "${srcdir}/sources.zip" \
-    -L "https://github.com/arut/nginx-dav-ext-module/archive/refs/tags/v${version}.zip"
+    -L 'https://github.com/arut/nginx-dav-ext-module/archive/refs/tags/v3.0.0.zip'
 
   [ -f "${srcdir}/sources.tar.gz" ] || curl \
     -o "${srcdir}/sources.tar.gz" \
-    -L "https://nginx.org/download/nginx-1.26.1.tar.gz"
+    -L "https://nginx.org/download/nginx-${version}.tar.gz"
 }
 
 package() {
