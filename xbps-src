@@ -48,14 +48,15 @@ function build() {
   find "${pkgdir}" -mindepth 1 -delete
   mkdir -p "${pkgdir}"
 
-  ( source "${srcdir}/template"
+  ( unset install
+    source "${srcdir}/template"
 
     # run prepare steps from template file
-    ( set -e; prepare )
+    ( set -e; set -x; prepare )
     guard $? 'error in prepare step'
 
     # run package steps from template file
-    ( set -e; package )
+    ( set -e; set -x; package )
     guard $? 'error in package step'
 
     mkdir -p "${bindir}/${arch}"
