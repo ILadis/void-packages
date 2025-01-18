@@ -5,10 +5,12 @@ Install or update required build dependencies:
       openssl-devel
 
 Cleanup previous installation:
-  - Remove previous kernel scripts and modules
+  - Remove previous kernel scripts and modules:
+    $ rm -rf /usr/src/kernel-headers-${kver}
+    $ rm -rf /usr/lib/modules/${kver}
 
 Build kernel scripts:
-  $ cd /usr/src/rpi*-kernel-headers-*
+  $ cd /usr/src/kernel-headers-${kver}
   $ make prepare0
   $ find scripts -name '*.o' -exec rm {} \;
 

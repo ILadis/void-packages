@@ -31,8 +31,11 @@ function install() {
   # skip dependency install if not running as root
   test "$(whoami)" != 'root' && return 1
 
-  ( source "${srcdir}/template"
+  ( unset install
+    source "${srcdir}/template"
+
     test -n "${makedepends[*]}" && xbps-install -Ay ${makedepends[*]}
+    test "$(type -t sudo)" == 'function' && sudo
   )
 }
 

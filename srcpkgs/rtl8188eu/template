@@ -1,17 +1,24 @@
 #!/bin/bash
 
 pkgname='rtl8188eu'
-version='6.6.42'
+version='6.6.69'
 revision='1'
 arch='armv7l'
-kver='6.6.42_1'
+kver='6.6.69_2'
 
 makedepends=('gcc' 'make' 'flex' 'bc' 'rpi-kernel-headers' 'openssl-devel')
-depends=('rpi-kernel>=6.6.42_1')
+depends=('rpi-kernel>=6.6.69_2')
 
 short_desc='Kernel module for rtl8188eu'
 license='Proprietary'
 homepage='https://github.com/lwfinger/rtl8188eu'
+
+sudo() {
+  # prepare required make scripts
+  cd "/usr/src/kernel-headers-${kver}"
+  make prepare0
+  find scripts -name '*.o' -exec rm {} \;
+}
 
 prepare() {
   # downloads source archive
@@ -22,7 +29,6 @@ prepare() {
 
 package() {
   unzip -d "${pkgdir}" "${srcdir}/sources.zip"
-
   cd "${pkgdir}/rtl8188eu-"*
   mkdir .git
 
