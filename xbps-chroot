@@ -48,7 +48,7 @@ function setup() {
 }
 
 function main() {
-  local tmpdir='/tmp/xbps-src'
+  local tmpdir="${SELF_DIR}/buildtmp"
 
   test ! -f '/.chroot'
   guard $? 'already in a chroot'
