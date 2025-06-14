@@ -111,5 +111,5 @@ package() {
   rm -rf "${pkgdir}/vlc" \
     "${pkgdir}/usr/lib/pkgconfig" \
     "${pkgdir}/usr/include" \
-    "${pkgdir}/usr/share"/{vlc,kde4,icons,docs,metainfo}
+    "${pkgdir}/usr/share"/{vlc,kde4,icons,docs,metainfo,applications}
 }
