@@ -1,16 +1,16 @@
 #!/bin/bash
 
 pkgname='rtl8188eu'
-version='6.6.78'
+version='6.12.52'
 revision='1'
 arch='armv7l'
-kver='6.6.78_1'
+kver='6.12.52_1'
 
 makedepends=('gcc' 'make' 'flex' 'bc' 'rpi-kernel-headers' 'openssl-devel')
-depends=('rpi-kernel>=6.6.78_1')
+depends=('rpi-kernel>=6.12.52_1')
 
 short_desc='Kernel module for rtl8188eu'
-license='Proprietary'
+license='GPL-2'
 homepage='https://github.com/lwfinger/rtl8188eu'
 
 sudo() {

@@ -64,8 +64,8 @@ function build() {
 
     mkdir -p "${bindir}/${arch}"
 
-    # required to "overwrite" signature of same package version
-    # this also requires deletion of /var/cache/xbps/<pkgname>.{xbps,sig} on clients
+    # required to "overwrite" signature when package was rebuilt
+    # this also requires deletion of /var/cache/xbps/<pkgname>.{xbps,sig} on hosts
     rm -f "${bindir}/${arch}/${pkgname}-${version}_${revision}.${arch}.xbps.sig"
 
     cd "${bindir}/${arch}"
@@ -79,7 +79,7 @@ function build() {
 
     export XBPS_TARGET_ARCH="${arch}"
     xbps-rindex -c "${bindir}/${arch}"
-    xbps-rindex -f -a "${bindir}/${arch}"/*.xbps
+    xbps-rindex -f -a "${bindir}/${arch}/${pkgname}-${version}_${revision}.${arch}.xbps"
     xbps-rindex "${bindir}/${arch}" \
       --sign --signedby 'root <root@raspberry.home>' \
       --privkey "${keydir}/signkey.pem"
