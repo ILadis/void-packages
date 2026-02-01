@@ -1,12 +1,12 @@
 #!/bin/bash
 
 pkgname='nginx-dav-ext-module'
-version='1.28.0'
+version='1.28.1'
 revision='1'
 arch='armv7l'
 
 makedepends=('gcc' 'make' 'perl' 'geoip-devel' 'libxml2-devel' 'libxslt-devel' 'openssl-devel' 'pcre-devel')
-depends=('nginx>=1.26.3_2' 'libxml2>=2.9.10_1' 'libxslt>=1.1.34_1')
+depends=('nginx>=1.28.1_2' 'libxml2>=2.9.10_1' 'libxslt>=1.1.34_1')
 
 short_desc='nginx module with support for missing PROPFIND and OPTIONS WebDAV methods'
 license='CUSTOM'
