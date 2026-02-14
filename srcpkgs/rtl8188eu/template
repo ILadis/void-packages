@@ -1,13 +1,13 @@
 #!/bin/bash
 
 pkgname='rtl8188eu'
-version='6.12.52'
+version='6.12.67'
 revision='1'
 arch='armv7l'
-kver='6.12.52_1'
+kver='6.12.67_1'
 
 makedepends=('gcc' 'make' 'flex' 'bc' 'rpi-kernel-headers' 'openssl-devel')
-depends=('rpi-kernel>=6.12.52_1')
+depends=('rpi-kernel>=6.12.67_1')
 
 short_desc='Kernel module for rtl8188eu'
 license='GPL-2'
