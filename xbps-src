@@ -29,9 +29,12 @@ function install() {
   guard $? 'no teamplate file found'
 
   # skip dependency install if not running as root
-  test "$(whoami)" != 'root' && return 1
+  if [ "$(whoami)" != 'root' ]; then
+    return 1
+  fi
 
-  ( unset install
+  # remove local functions before sourcing template
+  ( unset main switch install
     source "${srcdir}/template"
 
     test -n "${makedepends[*]}" && xbps-install -Ay ${makedepends[*]}
@@ -51,7 +54,8 @@ function build() {
   find "${pkgdir}" -mindepth 1 -delete
   mkdir -p "${pkgdir}"
 
-  ( unset install
+  # remove local functions before sourcing template
+  ( unset main switch install
     source "${srcdir}/template"
 
     # run prepare steps from template file

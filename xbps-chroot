@@ -48,17 +48,17 @@ function setup() {
 }
 
 function main() {
-  local tmpdir="${SELF_DIR}/buildtmp"
+  local buildroot="${SELF_DIR}/buildroot"
 
   test ! -f '/.chroot'
   guard $? 'already in a chroot'
 
-  purge "${tmpdir}"/{rootfs,buildfs}
+  purge "${buildroot}"/{rootfs,buildfs}
 
-  setup "${tmpdir}"/{rootfs,buildfs}
-  chroot "${tmpdir}"/rootfs "${SELF_DIR}/xbps-src" "${@:1}"
+  setup "${buildroot}"/{rootfs,buildfs}
+  chroot "${buildroot}"/rootfs "${SELF_DIR}/xbps-src" "${@:1}"
 
-  purge "${tmpdir}"/{rootfs,buildfs}
+  purge "${buildroot}"/{rootfs,buildfs}
 }
 
 main "${@}"
