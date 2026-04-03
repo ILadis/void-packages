@@ -1,10 +1,12 @@
 #!/bin/bash
 
 pkgname='box86'
-version='0.3.6'
+version='0.3.8'
 revision='1'
 arch='armv7l'
 depends=()
+
+makedepends=('gcc' 'cmake')
 
 short_desc='Linux Userspace x86 Emulator with a twist'
 license='MIT'
