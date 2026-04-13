@@ -46,7 +46,7 @@ All files in the `/pkgdir` directory will be included in the final package when 
 
 ### Signing packages
 
-Packages are automatically signed after building. In order to sign packages, a signig key must be generated. This key can be generated with either `ssh-keygen` or `openssl`:
+Packages are automatically signed after building. In order to sign packages, a signing key must be generated. This key can be generated with either `ssh-keygen` or `openssl`:
 
 ```sh
 $ ssh-keygen -t rsa -m PEM -f signkey.pem
