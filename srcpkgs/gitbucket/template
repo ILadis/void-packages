@@ -1,0 +1,46 @@
+#!/bin/bash
+
+pkgname='gitbucket'
+version='4.46.1'
+revision='1'
+arch='armv7l'
+depends=('openjdk17-jre>=17.0.15+2')
+makedepends=()
+
+short_desc='A Git platform with easy installation and high extensibility'
+license='Apache-2'
+homepage='https://gitbucket.github.io/'
+
+prepare() {
+  # downloads source archive
+  [ -f "${srcdir}/gitbucket.war" ] || curl \
+    -o "${srcdir}/gitbucket.war" \
+    -L "https://github.com/gitbucket/gitbucket/releases/download/${version}/gitbucket.war"
+}
+
+package() {
+  install -Dm 644 "${srcdir}/gitbucket.war" "${pkgdir}/usr/lib/gitbucket/gitbucket.war"
+
+  mkdir -p "${pkgdir}/etc/sv/gitbucket"
+  mkdir -p "${pkgdir}/etc/sv/gitbucket/log"
+
+  cat > "${pkgdir}/etc/sv/gitbucket/run" <<'EOF'
+#!/bin/sh
+exec 2>&1
+[ -r conf ] && . ./conf
+
+[ ! -z "${GITBUCKET_HOME}" ] \
+  && mkdir -p "${GITBUCKET_HOME}" \
+  && chown nobody:nogroup "${GITBUCKET_HOME}"
+
+exec chpst -u nobody:nogroup /usr/lib/jvm/openjdk17/bin/java -jar /usr/lib/gitbucket/gitbucket.war
+EOF
+
+  cat > "${pkgdir}/etc/sv/gitbucket/log/run" <<'EOF'
+#!/bin/sh
+exec logger -t gitbucket -p user.notice
+EOF
+
+  chmod 755 "${pkgdir}/etc/sv/gitbucket/run"
+  chmod 755 "${pkgdir}/etc/sv/gitbucket/log/run"
+}
