@@ -6,7 +6,7 @@ revision='1'
 arch='armv7l'
 
 makedepends=('gcc' 'make' 'perl' 'geoip-devel' 'libxml2-devel' 'libxslt-devel' 'openssl-devel' 'pcre-devel')
-depends=('nginx>=1.30.1_1' 'libxml2>=2.18.8_1' 'libxslt>=1.1.43_1')
+depends=('nginx>=1.30.1_1' 'libxml2>=2.13.8_1' 'libxslt>=1.1.43_1')
 
 short_desc='nginx module with support for missing PROPFIND and OPTIONS WebDAV methods'
 license='CUSTOM'

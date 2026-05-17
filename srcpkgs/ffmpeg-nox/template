@@ -59,6 +59,8 @@ package() {
   cd "${pkgdir}"
   rm -rf "${pkgdir}/ffmpeg" \
     "${pkgdir}/usr/lib/pkgconfig" \
+    "${pkgdir}/usr/share/doc" \
     "${pkgdir}/usr/share/ffmpeg/examples" \
+    "${pkgdir}/usr/share/man/man"{3,7} \
     "${pkgdir}/usr/include"
 }

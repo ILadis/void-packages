@@ -1,0 +1,73 @@
+#!/bin/bash
+
+pkgname='graphviz-nox'
+version='14.1.5'
+revision='1'
+arch='armv7l'
+depends=()
+
+makedepends=('gcc' 'make')
+
+short_desc='Graph visualization tools'
+license='EPL-2.0'
+homepage='https://graphviz.org'
+
+prepare() {
+  # downloads source archive
+  [ -f "${srcdir}/sources.tar.gz" ] || curl \
+    -o "${srcdir}/sources.tar.gz" \
+    -L "https://gitlab.com/api/v4/projects/4207231/packages/generic/graphviz-releases/${version}/graphviz-${version}.tar.gz"
+}
+
+package() {
+  mkdir "${pkgdir}/graphviz"
+  tar --extract -C "${pkgdir}/graphviz" -vf "${srcdir}/sources.tar.gz" \
+    --strip-components=1
+
+  cd "${pkgdir}/graphviz"
+  ./configure \
+    --prefix=/usr \
+    --disable-swig \
+    --disable-sharp \
+    --disable-d \
+    --disable-go \
+    --disable-guile \
+    --disable-java \
+    --disable-javascript \
+    --disable-lua \
+    --disable-perl \
+    --disable-php \
+    --disable-python \
+    --disable-python3 \
+    --disable-r \
+    --disable-ruby \
+    --disable-tcl \
+    --without-demos \
+    --without-x \
+    --without-poppler \
+    --without-rsvg \
+    --without-ghostscript \
+    --without-pangocairo \
+    --without-lasi \
+    --without-freetype2 \
+    --without-gdk \
+    --without-gdk-pixbuf \
+    --without-gtk \
+    --without-gtkgl \
+    --without-gtkglext \
+    --without-gts \
+    --without-ann \
+    --without-glade \
+    --without-qt
+
+  make -j$(nproc)
+  make DESTDIR="${pkgdir}" install
+
+  cd "${pkgdir}"
+  rm -rf "${pkgdir}/graphviz" \
+    "${pkgdir}/usr/lib/pkgconfig" \
+    "${pkgdir}/usr/share/doc" \
+    "${pkgdir}/usr/share/graphviz" \
+    "${pkgdir}/usr/share/man/man"{3,7} \
+    "${pkgdir}/usr/include"
+}
